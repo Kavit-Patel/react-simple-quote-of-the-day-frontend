@@ -2,7 +2,7 @@ import axios from "axios";
 import { useMutation, useQuery } from "react-query";
 
 export const api = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 
@@ -26,12 +26,6 @@ export const useSaveQuote = () =>
   useMutation((data: { text: string; author: string; userId: number }) =>
     api.post("/quote", { ...data })
   );
-// export const useFetchHistory = () =>
-//   useQuery("history", () => api.get("/quote/history").then((res) => res.data));
-// export const useSearchQuote = (query: string) =>
-//   useQuery(["search", query], () =>
-//     api.get(`/quote/search?query=${query}`).then((res) => res.data)
-//   );
 
 export const useFetchHistory = (userId: number) =>
   useQuery(["history", userId], () =>
