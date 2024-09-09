@@ -54,7 +54,7 @@ const Home = () => {
       <div className="flex gap-4">
         <button
           onClick={handleRefreshQuote}
-          className={` w-36 flex justify-center bg-green-500 text-white px-4 py-2 mt-4    
+          className={` w-36 flex justify-center bg-green-500 text-white px-4 py-2 mt-4 transition-all hover:bg-green-600 active:scale-95  
           `}
         >
           {isFetching ? <Loader /> : <span>Refresh Quote</span>}
@@ -62,7 +62,7 @@ const Home = () => {
         {user && (
           <button
             onClick={handleSaveQuote}
-            className="bg-blue-500 text-white px-4 py-2 mt-4 ml-4"
+            className="bg-blue-500 text-white px-4 py-2 mt-4 ml-4 transition-all hover:bg-blue-600 active:scale-95"
           >
             Save to History
           </button>
