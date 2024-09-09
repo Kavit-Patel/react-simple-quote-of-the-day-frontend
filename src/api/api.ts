@@ -7,7 +7,7 @@ export const api = axios.create({
 });
 
 export const fetchQuoteOfTheDay = async () => {
-  const response = await axios.get("https://api.quotable.io/random");
+  const response = await axios.get(import.meta.env.VITE_QUOTE_API);
   return response.data;
 };
 export const useLogin = () =>

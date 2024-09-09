@@ -23,7 +23,7 @@ const Home = () => {
     if (data && user) {
       try {
         await saveQuote({
-          text: data.content,
+          text: data.quote,
           author: data.author,
           userId: user.id,
         });
@@ -40,12 +40,17 @@ const Home = () => {
         <Loader />
       </div>
     );
-  if (error) return <p>Error loading quote.</p>;
+  if (error)
+    return (
+      <div className="w-full h-96 flex items-center justify-center">
+        Error loading quote...
+      </div>
+    );
 
   return (
     <div className=" flex flex-col items-center mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">Quote of the Day</h1>
-      {data && <QuoteCard quote={data.content} author={data.author} />}
+      {data && <QuoteCard quote={data.quote} author={data.author} />}
       <div className="flex gap-4">
         <button
           onClick={handleRefreshQuote}
