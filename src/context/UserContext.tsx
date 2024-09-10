@@ -2,6 +2,7 @@ import { useState, createContext, ReactNode } from "react";
 import { useLogin, useRegister } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 
 interface User {
   id: number;
@@ -32,24 +33,30 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const handleLogin = async (data: { email: string; password: string }) => {
     try {
       const response = await login(data);
-      toast.success("Logged In Successfull !");
       setUser(response);
       navigate("/");
+      toast.success("Login Successful !");
     } catch (error) {
-      toast.error("Error while Logged In");
-      console.error("Login failed", error);
+      const errorMessage =
+        error instanceof AxiosError && error.response
+          ? error.response.data.message.join(", ")
+          : "Login Failed !";
+      toast.error(errorMessage);
     }
   };
 
   const handleRegister = async (data: { email: string; password: string }) => {
     try {
       const response = await register(data);
-      toast.success("Logged In Successfull !");
       setUser(response);
       navigate("/");
+      toast.success("Registration successfull !");
     } catch (error) {
-      toast.error("Error while Logged In");
-      console.error("Registration failed", error);
+      const errorMessage =
+        error instanceof AxiosError && error.response
+          ? error.response.data.message.join(", ")
+          : "Registration Failed !";
+      toast.error(errorMessage);
     }
   };
 
