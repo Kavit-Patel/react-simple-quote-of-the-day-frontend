@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/UseAuth";
+import { useQueryClient } from "react-query";
+import { IUser } from "../types";
 
 const Navbar = () => {
-  const { user, logOut } = useAuth();
+  const queryClient = useQueryClient();
+  const user: IUser | undefined = queryClient.getQueryData("user");
+  const handleLogout = () => queryClient.setQueryData("user", null);
   return (
     <nav className="bg-blue-500 p-4">
       <div className="flex justify-between text-white">
@@ -25,7 +28,7 @@ const Navbar = () => {
               <Link to="/history" className="">
                 History
               </Link>
-              <button onClick={() => logOut()} className="text-red-200 ">
+              <button onClick={handleLogout} className="text-red-200 ">
                 Logout
               </button>
             </>

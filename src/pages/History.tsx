@@ -1,17 +1,13 @@
 import { useState } from "react";
 import { useFetchHistory } from "../api/api";
-import { useAuth } from "../context/UseAuth";
 import QuoteCard from "../components/QuoteCard";
 import Loader from "../components/Loader";
-
-interface IQuote {
-  id: number;
-  text: string;
-  author: string;
-}
+import { IQuote, IUser } from "../types";
+import { useQueryClient } from "react-query";
 
 const History = () => {
-  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const user: IUser | undefined = queryClient.getQueryData("user");
   const userId = user?.id;
 
   const { data: history, isLoading, error } = useFetchHistory(userId ?? 0);

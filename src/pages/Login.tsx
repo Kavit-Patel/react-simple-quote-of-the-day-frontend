@@ -1,15 +1,21 @@
 import { useState } from "react";
-import { useAuth } from "../context/UseAuth";
+// import { useAuth } from "../context/UseAuth";
 import Loader from "../components/Loader";
-
+import { useLogin } from "../api/api";
+import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "react-query";
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login, isLoading } = useAuth();
+  const { mutateAsync: login, isLoading } = useLogin();
+  const queryClient = useQueryClient();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login({ email, password });
+    const data = await login({ email, password });
+    queryClient.setQueryData("user", data);
+    navigate("/");
     setEmail("");
     setPassword("");
   };

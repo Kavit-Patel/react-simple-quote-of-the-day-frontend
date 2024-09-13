@@ -1,15 +1,26 @@
 import { useState } from "react";
-import { useAuth } from "../context/UseAuth";
 import Loader from "../components/Loader";
+import { useRegister } from "../api/api";
+import { useQueryClient } from "react-query";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { register, isLoading } = useAuth();
-
+  const { mutateAsync: register, isLoading } = useRegister();
+  const queryClient = useQueryClient();
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    await register({ email, password });
+    await register(
+      { email, password },
+      {
+        onSuccess: (data) => {
+          queryClient.setQueryData("user", data);
+          navigate("/");
+        },
+      }
+    );
     setEmail("");
     setPassword("");
   };

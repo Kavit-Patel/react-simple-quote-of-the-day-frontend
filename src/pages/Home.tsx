@@ -1,12 +1,12 @@
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import QuoteCard from "../components/QuoteCard";
 import { fetchQuoteOfTheDay, useSaveQuote } from "../api/api";
-import { useAuth } from "../context/UseAuth";
 import Loader from "../components/Loader";
-import { toast } from "react-toastify";
+import { IUser } from "../types";
 
 const Home = () => {
-  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const user: IUser | undefined = queryClient.getQueryData("user");
   const { data, isLoading, error, isFetching, refetch } = useQuery(
     "quoteOfTheDay",
     fetchQuoteOfTheDay,
@@ -21,17 +21,11 @@ const Home = () => {
 
   const handleSaveQuote = async () => {
     if (data && user) {
-      try {
-        await saveQuote({
-          text: data.quote,
-          author: data.author,
-          userId: user.id,
-        });
-        toast.success("Quote saved to history!");
-      } catch (error) {
-        toast.error("Failed to save quotes !");
-        console.error("Error saving quote:", error);
-      }
+      saveQuote({
+        text: data.quote,
+        author: data.author,
+        userId: user.id,
+      });
     }
   };
   if (isLoading)
