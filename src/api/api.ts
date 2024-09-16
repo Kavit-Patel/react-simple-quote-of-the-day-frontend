@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 
 export const api = axios.create({
@@ -9,7 +9,10 @@ export const api = axios.create({
 
 const errorMessage = (error: unknown) => {
   if (error instanceof AxiosError && error.response) {
-    return error.response.data?.message.join(", ") || "An error occured !";
+    const message = error.response.data?.message;
+    return message instanceof Array
+      ? error.response.data?.message.join(", ")
+      : message || "An error occured !";
   }
   if (error instanceof Error) {
     return error.message;
@@ -48,10 +51,33 @@ export const useRegister = () =>
       },
     }
   );
-export const useFetchProfile = () =>
-  useQuery("profile", () => api.get("/user/profile").then((res) => res.data));
+export const useFetchProfile = () => {
+  const queryClient = useQueryClient();
+  const cachedUser = queryClient.getQueryData("user");
+  return useQuery(
+    "profile",
+    () => api.get("/user/profile").then((res) => res.data),
+    {
+      enabled: !cachedUser,
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        queryClient.setQueryData("user", data);
+      },
+      onError: (err) => {
+        toast.info(errorMessage(err));
+      },
+    }
+  );
+};
 export const useFetchQuote = () =>
-  useQuery("quote", () => api.get("/quote").then((res) => res.data));
+  useQuery(
+    "quote",
+    () => api.get(import.meta.env.VITE_QUOTE_API).then((res) => res.data),
+    {
+      enabled: false,
+      refetchOnWindowFocus: false,
+    }
+  );
 export const useSaveQuote = () =>
   useMutation(
     (data: { text: string; author: string; userId: number }) =>

@@ -7,12 +7,21 @@ import Register from "./pages/Register";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useQuery, useQueryClient } from "react-query";
+import { useFetchProfile } from "./api/api";
+import { useEffect } from "react";
 
 const App = () => {
   const queryClient = useQueryClient();
-  const { data: user } = useQuery("user", () =>
+  const { data: cachedUser } = useQuery("user", () =>
     queryClient.getQueryData("user")
   );
+  const { data: fetchedUser, refetch } = useFetchProfile();
+  const user = cachedUser || fetchedUser;
+  useEffect(() => {
+    if (!cachedUser) {
+      refetch();
+    }
+  }, [cachedUser, refetch]);
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />

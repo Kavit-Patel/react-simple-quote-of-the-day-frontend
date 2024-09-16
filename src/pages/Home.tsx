@@ -3,15 +3,20 @@ import QuoteCard from "../components/QuoteCard";
 import { fetchQuoteOfTheDay, useSaveQuote } from "../api/api";
 import Loader from "../components/Loader";
 import { IUser } from "../types";
+import { useState } from "react";
 
 const Home = () => {
+  const [isQuoteFetched, setIsQuoteFetched] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const user: IUser | undefined = queryClient.getQueryData("user");
   const { data, isLoading, error, isFetching, refetch } = useQuery(
     "quoteOfTheDay",
     fetchQuoteOfTheDay,
     {
+      enabled: !isQuoteFetched,
       refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 50,
+      onSuccess: () => setIsQuoteFetched(true),
     }
   );
   const { mutate: saveQuote } = useSaveQuote();
